@@ -6,7 +6,7 @@ class Form extends React.Component {
         super(props);
         this.state = {
             URL: '',
-            method: ''
+            method: 'GET'
         }
     }
 
@@ -33,7 +33,7 @@ class Form extends React.Component {
                     <button onClick={this.handleClick}>Go!</button>
                     <div>
                         <fieldset>
-                            <button onClick={this.handleMethod}>GET</button>
+                            <button onClicke={this.handleMethod}>GET</button>
                             <button onClick={this.handleMethod}>PUT</button>
                             <button onClick={this.handleMethod}>POST</button>
                             <button onClick={this.handleMethod}>DELETE</button>
@@ -41,7 +41,8 @@ class Form extends React.Component {
                     </div>
                     <fieldset>
                         <legend>Results</legend>
-                    <p> {this.state.method} {this.state.URL}</p>
+                        <p> {this.state.method} </p>
+                        <p> {this.state.URL} </p>
                     </fieldset>
                 </form>
             </div>
