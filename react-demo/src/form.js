@@ -5,48 +5,51 @@ class Form extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            URL: '',
+            display: false,
+            url: '',
             method: ''
         }
     }
 
-    handleInput = e => {
-        let newInput = e.target.value;
-        this.setState({ URL: newInput });
-    }
-
-    handleMethod = e => {
-        let newMethod = e.target.value;
-        this.setState({ method: newMethod });
-    }
-
     handleClick = e => {
+        const method = e.target.name;
+        this.setState({ method });
+        console.log(this.state.method);
+        if (this.state.url) { this.setState({ display: true }) }
+    }
+
+    handleSubmit = e => {
         e.preventDefault();
+        const url = e.target.value;
+        this.setState({ url });
+        console.log(url);
+        if (this.state.method && this.state.url) { this.setState({ display: true }) }
     }
 
     render() {
         return (
             <div>
-                <form>
+                <form onSubmit={this.handleSubmit}>
                     <label for="URL"> URL: </label>
-                    <input name="URL" onChange={this.handleInput} />
-                    <button onClick={this.handleClick}>Go!</button>
-                    <div>
-                        <fieldset>
-                            <button onClick={this.handleMethod}>GET</button>
-                            <button onClick={this.handleMethod}>PUT</button>
-                            <button onClick={this.handleMethod}>POST</button>
-                            <button onClick={this.handleMethod}>DELETE</button>
-                        </fieldset>
-                    </div>
-                    <fieldset>
-                        <legend>Results</legend>
-                    <p> {this.state.method} {this.state.URL}</p>
-                    </fieldset>
+                    <input name="URL" onChange={this.handleSubmit} />
+                    <button type="submit">Go!</button>
                 </form>
+                <div>
+                    <button name="get" onClick={this.handleClick}>GET</button>
+                    <button name="put" onClick={this.handleClick}>PUT</button>
+                    <button name="post" onClick={this.handleClick}>POST</button>
+                    <button name="delete" onClick={this.handleClick}>DELETE</button>
+                </div>
+                {!this.state.display ? "":
+                    < div >
+                    <legend>Results</legend>
+                    <p>url: {this.state.url}</p>
+                    <p>method: {this.state.method}</p>
+                    </div>
+                }
             </div>
         )
-    }
-}
+    };
+};
 
 export default Form;
