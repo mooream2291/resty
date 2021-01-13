@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Results from './results'
 
 class Form extends React.Component {
     constructor(props) {
@@ -7,32 +7,69 @@ class Form extends React.Component {
         this.state = {
             display: false,
             url: '',
-            method: ''
+            method: '',
+            result: [],
+            headers: []
         }
     }
 
     handleClick = e => {
+        e.preventDefault();
         const method = e.target.name;
         this.setState({ method });
-        console.log(this.state.method);
-        if (this.state.url) { this.setState({ display: true }) }
+        // this.prepResults();
     }
 
-    handleSubmit = e => {
+    prepResults = e => {
         e.preventDefault();
-        const url = e.target.value;
-        this.setState({ url });
+        this.getResults();
+        this.setState({ display: true })
+    }
+    handleUrl = e => {
+        let newUrl = e.target.value;
+        this.setState({ url: newUrl });
+    }
+
+    getResults = async (e) => {
+        const url = this.state.url;
         console.log(url);
-        if (this.state.method && this.state.url) { this.setState({ display: true }) }
+        const method = this.state.method;
+        console.log(method);
+
+        let headers = {};
+
+        const result = await fetch(url, { method: method, mode: 'cors' })
+            .then(response => {
+                if (response.status === 200) {
+                    let i = 0;
+                    for (var pair of response.headers.entries()) {
+                        headers[i] = { name: pair[0], value: pair[1] };
+                        i++;
+                    }
+                    return response.json();
+                } else {
+                    return;
+                }
+            });
+        let resultObj = {};
+        resultObj.count =   Object.keys(result).length;
+        resultObj.result = result;
+        console.log(resultObj);
+
+        this.setState({ result: resultObj });
+        this.setState({ headers: headers });
     }
 
     render() {
         return (
-            <div>
-                <form onSubmit={this.handleSubmit}>
+            <div id="form">
+                <form>
                     <label for="URL"> URL: </label>
-                    <input name="URL" onChange={this.handleSubmit} />
-                    <button type="submit">Go!</button>
+                    <input name="URL" onBlur={this.handleUrl} />
+                    {(this.state.method && this.state.url) ?
+                        <button name="go" onClick={this.prepResults}>Go!</button>
+                        : ""
+                    }
                 </form>
                 <div>
                     <button name="get" onClick={this.handleClick}>GET</button>
@@ -40,13 +77,13 @@ class Form extends React.Component {
                     <button name="post" onClick={this.handleClick}>POST</button>
                     <button name="delete" onClick={this.handleClick}>DELETE</button>
                 </div>
-                {!this.state.display ? "":
-                    < div >
-                    <legend>Results</legend>
-                    <p>url: {this.state.url}</p>
-                    <p>method: {this.state.method}</p>
-                    </div>
-                }
+                {!this.state.display ? "" :
+                    <Results
+                        url={this.state.url}
+                        method={this.state.method}
+                        result={this.state.result}
+                        headers={this.state.headers}
+                    />}
             </div>
         )
     };
