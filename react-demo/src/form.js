@@ -35,12 +35,15 @@ class Form extends React.Component {
         console.log(url);
         const method = this.state.method;
         console.log(method);
-
+//to make this dynamic, do multiple if statements//
         let headers = {};
 
         const result = await fetch(url, { method: method, mode: 'cors' })
             .then(response => {
                 if (response.status === 200) {
+                    //save to local storage//
+                    var savedResult = JSON.stringify(response);
+                    localStorage.setItem('savedMethod' , savedResult);
                     let i = 0;
                     for (var pair of response.headers.entries()) {
                         headers[i] = { name: pair[0], value: pair[1] };
@@ -59,6 +62,27 @@ class Form extends React.Component {
         this.setState({ result: resultObj });
         this.setState({ headers: headers });
     }
+//put addPoke function //
+//add a poke to the history display//
+//https://sarastrasner-auth-api.herokuapp.com/api/v1/clothes///
+    addResult = async (e) => {
+        const result = await fetch(url, { method: method, mode: 'cors' })
+            .then(response => {
+                if (response.status === 200) {
+    //reference to users inout
+
+   //sets it
+    var savedResult = JSON.stringify(results);
+  
+    localStorage.setItem('savedMethod' , savedResult);
+    var getKey = localStorage.getItem('savedMethod');
+    var storageObject = JSON.parse(getKey);
+    console.log(storageObject, storageObject.name);
+  }
+
+    }
+//post updatePoke function //
+//delete deletePoke function //
 
     render() {
         return (
