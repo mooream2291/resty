@@ -1,5 +1,6 @@
 import React from 'react';
 import Results from './results';
+import If from './if';
 
 class Form extends React.Component {
     constructor(props) {
@@ -12,6 +13,7 @@ class Form extends React.Component {
             headers: []
         }
     }
+
     handleClick = e => {
         e.preventDefault();
         const method = e.target.name;
@@ -30,20 +32,24 @@ class Form extends React.Component {
     }
 
     getResults = async (e) => {
-        const url = this.state.url;
+        let url = this.state.url;
         console.log(url);
-        const method = this.state.method;
+        let method = this.state.method;
         console.log(method);
-        const newHistoryObj = {
-            url, method
-        }
-        this.props.updateHistory(newHistoryObj);
         //to make this dynamic, do multiple if statements//
         let headers = {};
 
         const result = await fetch(url, { method: method, mode: 'cors' })
             .then(response => {
                 if (response.status === 200) {
+                    //save to local storage//
+                    let newObj = {
+                        url: url,
+                        method: method
+                    }
+                    this.props.updateHistory(newObj);
+                    // var savedResult = JSON.stringify(response);
+                    // localStorage.setItem('savedMethod', savedResult);
                     let i = 0;
                     for (var pair of response.headers.entries()) {
                         headers[i] = { name: pair[0], value: pair[1] };
@@ -62,23 +68,34 @@ class Form extends React.Component {
         this.setState({ result: resultObj });
         this.setState({ headers: headers });
     }
+    //put addPoke function //
     //add a poke to the history display//
     //https://sarastrasner-auth-api.herokuapp.com/api/v1/clothes///
     addResult = async (e) => {
-        const result = await fetch(this.state.url, { method: this.state.method, mode: 'cors' })
+        let url = this.state.url;
+        let method = this.state.method;
+        const results = await fetch(url, { method: method, mode: 'cors' })
             .then(response => {
                 if (response.status === 200) {
+                    //reference to users inout
 
+                    //sets it
+                    var savedResult = JSON.stringify(results);
+
+                    localStorage.setItem('savedMethod', savedResult);
+                    var getKey = localStorage.getItem('savedMethod');
+                    var storageObject = JSON.parse(getKey);
+                    console.log(storageObject, storageObject.name);
                 }
+
             }
             )
     }
     //post updatePoke function //
     //delete deletePoke function //
-
     render() {
         return (
-            <div id="form">
+            <div id="form" >
                 <form>
                     <label for="URL"> URL: </label>
                     <input name="URL" onBlur={this.handleUrl} />
@@ -93,6 +110,7 @@ class Form extends React.Component {
                     <button name="post" onClick={this.handleClick}>POST</button>
                     <button name="delete" onClick={this.handleClick}>DELETE</button>
                 </div>
+                {/* <If> */}
                 {!this.state.display ? "" :
                     <Results
                         url={this.state.url}
@@ -100,9 +118,10 @@ class Form extends React.Component {
                         result={this.state.result}
                         headers={this.state.headers}
                     />}
-            </div>
+                {/* </If> */}
+            </div >
         )
-    };
+    }
 };
 
 export default Form;

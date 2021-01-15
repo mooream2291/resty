@@ -6,6 +6,7 @@ import Footer from './footer';
 import './app.scss';
 import './header.scss';
 import History from './history'
+import { BrowserRouter } from 'react-router-dom';
 
 class App extends React.Component {
   constructor(props) {
@@ -20,17 +21,20 @@ class App extends React.Component {
     this.setState({ history: [...this.state.history, newObj] })
 
   }
-
+const App = props => {
   render() {
     return (
       <>
+      <BrowserRouter>
       <Header />
       <Form updateHistory= {this.updateHistory}/>
       <History history= {this.state.history}/>
       <Footer />
+      </BrowserRouter>
       </>
     )
   };
+}
 };
 
 export default App;
